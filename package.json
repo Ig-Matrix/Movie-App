@@ -1,0 +1,28 @@
+{
+  "name": "lesson-one",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:css": "npx stylelint \"**/*.css\"",
+    "lint:html": "npx linthtml \"**/*.html\"",
+    "lint:all": "npm run lint:html && npm run lint:css",
+    "fix:lint:css": "npx stylelint \"**/*.css\" --fix",
+    "js-lint": "eslint ./**/*.js",
+    "js-lint-fix": "eslint ./**/*.js --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.43.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^16.0.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "@linthtml/linthtml": "^0.9.4",
+    "stylelint": "^15.4.0",
+    "stylelint-config-standard": "^32.0.0"
+  }
+}
