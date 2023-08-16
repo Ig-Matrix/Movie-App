@@ -95,15 +95,82 @@ function displayShow(tvShow) {
     card.classList.add("container-fluid", "card");
     card.style.width = "18rem";
     cardImg.classList.add("card-img-top");
-    likes.classList.add("fas", "fa-heart", "likes-style");
-    comments.classList.add("fas", "fa-comment", "comments-style");
+    likes.classList.add("fas", "fa-heart");
+    comments.classList.add("fas", "fa-comment");
     cardBody.classList.add("card-body");
-    cardTitle.classList.add("card-title", 'text-center');
+    cardTitle.classList.add("card-title", "text-center");
+
+    let modal = createModalPage(tvShow);
+
+    comments.addEventListener("click", () => {
+        modal.style.display = "block";
+    });
 
     cardBody.append(cardTitle, likes, comments);
-    card.append(cardImg, cardBody);
-    
+    card.append(cardImg, cardBody, modal);
+
     return card;
 }
 
 populateShow();
+
+function createModalPage(tvShow) {
+    let modalPage = document.createElement("div"),
+        modalContent = document.createElement("div"),
+        closePageIcon = document.createElement("span"),
+        showDescription = document.createElement("p"),
+        showImage = document.createElement("img"),
+        showTitle = document.createElement("h2"),
+        commentContainer = document.createElement("div"),
+        commentNameWrapper = document.createElement("div"),
+        commentMessageWrapper = document.createElement("div"),
+        inputName = document.createElement("input"),
+        inputComment = document.createElement("textarea"),
+        submitComment = document.createElement("button");
+
+    closePageIcon.textContent = "X";
+
+    closePageIcon.addEventListener("click", () => {
+        modalPage.style.display = "none";
+    });
+
+    submitComment.textContent = "Submit";
+    submitComment.type = "submit";
+
+    showDescription.innerHTML = tvShow.summary;
+    showImage.src = tvShow.image.medium;
+    showTitle.textContent = tvShow.name;
+
+    modalPage.classList.add("modal");
+    closePageIcon.classList.add("close");
+    showImage.classList.add("modalImage");
+    modalContent.classList.add("modal-content");
+
+    submitComment.textContent = "Submit";
+    inputName.placeholder = "Enter name ...";
+    inputComment.placeholder = "Enter comment ...";
+
+    commentNameWrapper.appendChild(inputName)
+    commentMessageWrapper.appendChild(inputComment)
+    commentContainer.append(commentNameWrapper, commentMessageWrapper, submitComment)
+
+    modalContent.append(
+        showImage,
+        showTitle,
+        showDescription,
+        commentContainer,
+        closePageIcon
+    );
+    
+
+    modalPage.append(modalContent);
+
+    window.addEventListener("click", (e) => {
+        if (e.target === modalPage) {
+            modalPage.style.display = "none";
+        }
+    });
+
+    return modalPage;
+}
+
