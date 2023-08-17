@@ -63,7 +63,7 @@ async function populateShow() {
             cardContainer.appendChild(row);
         }
 
-        let cardColumn = displayShow(show);
+        let cardColumn = displayShow(show, show.rating.average);
 
         row.appendChild(cardColumn);
     });
@@ -93,14 +93,18 @@ function hideBtns(totalMovies) {
         : (next.style.visibility = "visible");
 }
 
-function displayShow(tvShow) {
+function displayShow(tvShow, ratingAve) {
     let card = document.createElement("div"),
         cardImg = document.createElement("img"),
         cardBody = document.createElement("div"),
         likes = document.createElement("span"),
+        likesNum = document.createElement("span"),
+        numComments = document.createElement("span"),
         commentsIcon = document.createElement("span"),
         cardTitle = document.createElement("h3");
 
+    let ratingsEl = elementClasslist("div", "ratingsEl");
+    let likesCommentsCont = elementClasslist("div", "likes-comm-cont");
     cardImg.src = tvShow.image.original;
     cardTitle.textContent = tvShow.name;
 
@@ -108,9 +112,9 @@ function displayShow(tvShow) {
     card.style.width = "18rem";
     cardImg.classList.add("card-img-top");
     likes.classList.add("fas", "fa-heart");
-    commentsIcon.classList.add("fas", "fa-comment");
+    commentsIcon.classList.add("fas", "fa-message");
     cardBody.classList.add("card-body");
-    cardTitle.classList.add("card-title", "text-center");
+    cardTitle.classList.add("card-title");
 
     let modal = createModalPage(tvShow);
 
@@ -121,20 +125,80 @@ function displayShow(tvShow) {
     let displayCommentsElement = modal.querySelector(".display-comments");
     let commentsNumber = modal.querySelector(".commentsNum");
     errorMes.textContent = "name and comment cannot be empty";
-    
-    function showComments(apiData) {
-        displayCommentsElement.innerHTML=""
-        if (apiData) {
-            apiData.forEach((data) => {
-                let commentElement = elementClasslist("div", "comment");
-                commentElement.innerHTML = `<span class="name">${data.username}</span>:${data.comment}<span class="time">${data.creation_date}</span>`;
-                displayCommentsElement.append(commentElement);
+
+    async function sendComments(id, username, comment) {
+        const apiUrl = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/comments`;
+        const commentsData = {
+            item_id: id,
+            username: username,
+            comment: comment,
+        };
+        try {
+            const res = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(commentsData),
             });
-            commentsNumber.innerText=`(${apiData.length})` 
+            res.ok ? getcomments(id) : console.log("Error posting comment");
+        } catch (error) {
+            console.error(error);
         }
     }
-    
+    function showComments(apiData) {
+        displayCommentsElement.innerHTML = "";
 
+        if (apiData) {
+            const timeNow = new Date();
+            for (let i = apiData.length - 1; i >= 0; i--) {
+                const data = apiData[i];
+                const timeOfComment = new Date(data.creation_date);
+                const timeDiffInMillSec = timeNow - timeOfComment;
+                const timeInDays = Math.floor(
+                    timeDiffInMillSec / (1000 * 60 * 60 * 24)
+                );
+                let timeDiff = "";
+                if (timeInDays === 0) {
+                    timeDiff = "today";
+                } else if (timeInDays === 1) {
+                    timeDiff = "yesterday";
+                } else {
+                    timeDiff = `${timeInDays} days ago`;
+                }
+
+                let commentElement = elementClasslist("div", "comment");
+                const nameEL = elementContentAndClasslist(
+                        "span",
+                        data.username,
+                        "name"
+                    ),
+                    commentEl = elementContentAndClasslist(
+                        "span",
+                        data.comment,
+                        "comment"
+                    ),
+                    timeEl = elementContentAndClasslist(
+                        "span",
+                        timeDiff,
+                        "time"
+                    );
+
+                commentElement.append(nameEL, commentEl, timeEl);
+                displayCommentsElement.appendChild(commentElement);
+            }
+            if (apiData.length === undefined) {
+                commentsNumber.innerText = `(${0})`;
+                numComments.innerText = 0;
+            } else {
+                commentsNumber.innerText = `(${apiData.length})`;
+                numComments.innerText = apiData.length;
+            }
+            if (numComments.innerText > 0) {
+                commentsIcon.style.color = "grey";
+            }
+        }
+    }
     async function getcomments(id) {
         const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/comments?item_id=${id}`;
         try {
@@ -146,15 +210,72 @@ function displayShow(tvShow) {
         }
     }
 
+    getcomments(tvShow.id);
+
+    async function sendLikes(id) {
+        const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/likes`;
+        const dataBody = {
+            item_id: id,
+        };
+        try {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataBody),
+            });
+            if (res.ok) {
+                console.log("like sent successfully");
+                getLikes()
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    sendLikes(tvShow.id)
+
+    async function getLikes() {
+        const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/likes`;
+        try {
+           const res = await fetch(url) 
+           const data = await res.json()
+           showLikes(data)
+           
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    function showLikes(likesData) {
+        likesData.filter(like => {
+            if (like.item_id === tvShow.id){
+                likesNum.innerText=like.likes
+            }
+        })
+        
+    }
+    
+    likes.addEventListener('click', function(e){
+        getLikes()
+        e.target.style.color='red'
+    })
+
+    cardImg.addEventListener("click", () => {
+        modal.style.display = "block";
+        getcomments(tvShow.id);
+    });
     commentsIcon.addEventListener("click", () => {
         modal.style.display = "block";
-        getcomments(tvShow.id)
+        getcomments(tvShow.id);
     });
 
     submitCommentBtn.addEventListener("click", () => {
         if (username.value !== "" && userComments.value !== "") {
             sendComments(tvShow.id, username.value, userComments.value);
-            getcomments(tvShow.id);
+            username.value = "";
+            userComments.value = "";
         } else {
             errorMes.style.visibility = "visible";
         }
@@ -164,7 +285,92 @@ function displayShow(tvShow) {
         }, 2000);
     });
 
-    cardBody.append(cardTitle, likes, commentsIcon);
+    function calcRatings(ratings) {
+        let average = (ratings / 10) * 5;
+        return average;
+    }
+
+    function displayRatings() {
+        let rating = calcRatings(ratingAve);
+        if (rating === 1) {
+            ratingsEl.innerHTML = `
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            `;
+        } else if (rating > 1 && rating < 2) {
+            ratingsEl.innerHTML = `
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star-half-stroke" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star"style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star"style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star"style="color: #ffd700;"></i>
+            `;
+        } else if (rating === 2) {
+            ratingsEl.innerHTML = `
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            `;
+        } else if (rating > 2 && rating < 3) {
+            ratingsEl.innerHTML = `
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star-half-stroke" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            `;
+        } else if (rating === 3) {
+            ratingsEl.innerHTML = `
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star"style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star"style="color: #ffd700;"></i>
+            `;
+        } else if (rating > 3 && rating < 4) {
+            ratingsEl.innerHTML = `
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star-half-stroke" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            `;
+        } else if (rating === 4) {
+            ratingsEl.innerHTML = `
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-regular fa-star" style="color: #ffd700;"></i>
+            `;
+        } else if (rating > 4 && rating < 5) {
+            ratingsEl.innerHTML = `
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star-half-stroke" style="color: #ffd700;"></i>
+            `;
+        } else if (rating === 5) {
+            ratingsEl.innerHTML = `
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            <i class="fa-solid fa-star" style="color: #ffd700;"></i>
+            `;
+        }
+    }
+
+    displayRatings();
+
+    likesCommentsCont.append(likes, likesNum, commentsIcon, numComments);
+    cardBody.append(cardTitle, ratingsEl, likesCommentsCont);
     card.append(cardImg, cardBody, modal);
 
     return card;
@@ -190,7 +396,7 @@ function createModalPage(tvShow) {
         descSection = elementClasslist("div", "descSection"),
         showDescription = elementClasslist("p", "modal-text-desc");
     (displayComments = elementClasslist("div", "displayComments")),
-    (commentsHeading = elementClasslist("div", "commentsHeading")),
+        (commentsHeading = elementClasslist("div", "commentsHeading")),
         (displayCommentsBody = elementClasslist("div", "display-comments")),
         (commentNameWrapper = elementClasslist("div", "nameWrapper")),
         (commentMessageWrapper = elementClasslist("div", "messageWrapper")),
@@ -254,7 +460,7 @@ function createModalPage(tvShow) {
     leftSection.append(showTitle, movieSection, descSection);
 
     middleSection.appendChild(middleTitle, middleBody);
-    commentsHeading.append(commentSectionTitle, commentsNum)
+    commentsHeading.append(commentSectionTitle, commentsNum);
     displayComments.append(commentsHeading, displayCommentsBody);
 
     rightSection.append(commentContainer, displayComments);
@@ -277,25 +483,4 @@ function createModalPage(tvShow) {
     return modalPage;
 }
 
-async function sendComments(id, username, comment) {
-    const apiUrl = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/comments`;
-    const commentsData = {
-        item_id: id,
-        username: username,
-        comment: comment,
-    };
-    try {
-        const res = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(commentsData),
-        });
-        res.ok
-            ? console.log("comment posted succesfuuly")
-            : console.log("Error posting comment");
-    } catch (error) {
-        console.error(error);
-    }
-}
+async function sendLikes(params) {}
