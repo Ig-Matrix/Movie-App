@@ -227,40 +227,43 @@ function displayShow(tvShow, ratingAve) {
             });
             if (res.ok) {
                 console.log("like sent successfully");
-                getLikes()
+                getLikes();
             }
         } catch (error) {
             console.log(error);
         }
     }
 
-    sendLikes(tvShow.id)
+    getLikes();
 
     async function getLikes() {
         const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/likes`;
         try {
-           const res = await fetch(url) 
-           const data = await res.json()
-           showLikes(data)
-           
+            const res = await fetch(url);
+            const data = await res.json();
+            showLikes(data);
         } catch (error) {
             console.log(error);
         }
     }
-    
+
     function showLikes(likesData) {
-        likesData.filter(like => {
-            if (like.item_id === tvShow.id){
-                likesNum.innerText=like.likes
+        likesData.filter((like) => {
+            if (like.item_id === tvShow.id) {
+                likesNum.innerText = like.likes;
             }
-        })
-        
+        });
     }
-    
-    likes.addEventListener('click', function(e){
-        getLikes()
-        e.target.style.color='red'
-    })
+
+    likes.addEventListener(
+        "click",
+        function (e) {
+            sendLikes(tvShow.id);
+            getLikes();
+            e.target.style.color = "red";
+        },
+        { once: true }
+    );
 
     cardImg.addEventListener("click", () => {
         modal.style.display = "block";
@@ -482,5 +485,3 @@ function createModalPage(tvShow) {
 
     return modalPage;
 }
-
-async function sendLikes(params) {}
