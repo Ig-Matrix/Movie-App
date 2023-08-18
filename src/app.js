@@ -1,6 +1,28 @@
 const moviePage = document.querySelector("main");
 const cardContainer = document.querySelector(".card");
+const searchInput = document.querySelector('input[type="search"'),
+    searchBtn = document.querySelector(".searchButton"),
+    searchResult = document.querySelector(".searchResult");
 const apiUrl = "https://api.tvmaze.com/shows";
+
+searchBtn.addEventListener("click", async () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    const fetchedShows = await fetchShowsData();
+
+    const matchingTerms = fetchedShows.filter((show) => {
+        show.name.toLowerCase().includes(searchTerm);
+    });
+
+    if (matchingTerms.length === 0) {
+        const result = elementCreator("p", "No results");
+        searchResult.appendChild(result);
+    } else {
+        matchingTerms.forEach((show) => {
+            const cardColumn = displayShow(show, show.rating.average);
+            searchResult.appendChild(cardColumn);
+        });
+    }
+});
 
 const elementCreator = (elementName, content) => {
     const element = document.createElement(elementName);
@@ -22,13 +44,19 @@ const elementContentAndClasslist = (elementName, content, className) => {
 
 const paginationContainer = elementCreator("ul"),
     next = elementCreator("button", "Next"),
+    nextLi = elementClasslist("li", "nextLi"),
+    prevLi = elementClasslist("li", "prevLi"),
     prev = elementCreator("button", "Prev");
 
 paginationContainer.classList.add("pagination");
-next.classList.add("page-item");
-prev.classList.add("page-item");
+nextLi.classList.add("page-item");
+next.classList.add("page-link");
+prev.classList.add("page-link");
+prevLi.classList.add("page-item");
 
-paginationContainer.append(prev, next);
+nextLi.appendChild(next)
+prevLi.appendChild(prev)
+paginationContainer.append(prevLi, nextLi);
 moviePage.append(paginationContainer);
 
 let itemsPerpage = 8;
@@ -83,14 +111,14 @@ prev.addEventListener("click", () => {
 
 function hideBtns(totalMovies) {
     currentPage === 1
-        ? (prev.style.visibility = "hidden")
-        : (prev.style.visibility = "visible");
+        ? (prevLi.style.visibility = "hidden")
+        : (prevLi.style.visibility = "visible");
 
     let totalPages = Math.ceil(totalMovies.length / itemsPerpage);
 
     currentPage === totalPages
-        ? (next.style.visibility = "hidden")
-        : (next.style.visibility = "visible");
+        ? (nextLi.style.visibility = "hidden")
+        : (nextLi.style.visibility = "visible");
 }
 
 function displayShow(tvShow, ratingAve) {
@@ -117,7 +145,6 @@ function displayShow(tvShow, ratingAve) {
     cardTitle.classList.add("card-title");
 
     let modal = createModalPage(tvShow);
-
     let username = modal.querySelector(".username");
     let userComments = modal.querySelector(".userComments");
     let errorMes = modal.querySelector(".error");
@@ -195,7 +222,7 @@ function displayShow(tvShow, ratingAve) {
                 numComments.innerText = apiData.length;
             }
             if (numComments.innerText > 0) {
-                commentsIcon.style.color = "grey";
+                commentsIcon.style.color = "#160404";
             }
         }
     }
@@ -386,12 +413,16 @@ function createModalPage(tvShow) {
         modalContent = document.createElement("div"),
         closePageIcon = document.createElement("span"),
         showImage = document.createElement("img"),
-        showTitle = document.createElement("h2"),
         commentContainer = document.createElement("div"),
         inputName = document.createElement("input"),
         inputComment = document.createElement("textarea"),
         errorMessage = document.createElement("div");
 
+    const showTitle = elementContentAndClasslist(
+        "h2",
+        tvShow.name,
+        "showTitle"
+    );
     const leftSection = elementClasslist("div", "leftSection"),
         middleSection = elementClasslist("div", "middleSection"),
         rightSection = elementClasslist("div", "rightSection"),
@@ -410,23 +441,39 @@ function createModalPage(tvShow) {
             "TV SHOW INFO",
             "middleTitle"
         ),
-        commentSectionTitle = elementContentAndClasslist(
+        addComment = elementContentAndClasslist(
             "h5",
-            "All Comments",
-            "commentSectionTitle"
-        ),
-        nameLabel = elementContentAndClasslist("label", "Name", "form-label"),
-        messageLabel = elementContentAndClasslist(
+            "Add Comment",
+            "addcomment"
+        );
+    (commentSectionTitle = elementContentAndClasslist(
+        "h5",
+        "All Comments",
+        "commentSectionTitle"
+    )),
+        (nameLabel = elementContentAndClasslist("label", "Name", "form-label")),
+        (messageLabel = elementContentAndClasslist(
             "label",
             "Message",
             "form-label"
-        ),
-        submitComment = elementContentAndClasslist(
+        )),
+        (submitComment = elementContentAndClasslist(
             "button",
             "Submit",
             "submit-btn"
-        );
+        ));
+    const modalInner = elementClasslist("div", "modalInner");
     const middleBody = elementClasslist("div", "middleBody");
+    middleBody.innerHTML = `
+    <p class=''>${tvShow.network.name} (${tvShow.premiered}-${tvShow.ended})</p>
+    <p class=''><span class="fw-bold">Schedule:</span> ${tvShow.schedule.days[0]}s at ${tvShow.schedule.time} (${tvShow.averageRuntime}mins)</p>
+    <p class=''><span class="fw-bold">Status:</span> ${tvShow.status}</p>
+    <p class=''><span class="fw-bold">Show-type:</span> ${tvShow.type}</p>
+    <p class=''><span class="fw-bold">Genres:</span> ${tvShow.genres[0]}, ${tvShow.genres[1]}, ${tvShow.genres[2]}</p>
+    <p class=''><span class="fw-bold">Language:</span> ${tvShow.language}</p>
+    <p class=''><span class="fw-bold">Download size:</span> ${tvShow.weight}mb</p>
+    <p class=''><span class="fw-bold">Official site:</span> Visit <a href="${tvShow.officialSite}"class="text-decoration-none fst-italic">${tvShow.network.name}</a> </p>
+    `;
 
     closePageIcon.textContent = "X";
 
@@ -436,7 +483,6 @@ function createModalPage(tvShow) {
 
     showDescription.innerHTML = tvShow.summary;
     showImage.src = tvShow.image.medium;
-    showTitle.textContent = tvShow.name;
 
     modalPage.classList.add("modal");
     closePageIcon.classList.add("close");
@@ -446,13 +492,14 @@ function createModalPage(tvShow) {
     inputComment.classList.add("form-control", "userComments");
     errorMessage.classList.add("error");
 
-    inputName.placeholder = "Enter name ...";
-    inputComment.placeholder = "Enter comment ...";
+    inputName.placeholder = "Enter name ";
+    inputComment.placeholder = "Enter comment ";
 
     commentNameWrapper.append(nameLabel, inputName);
     commentMessageWrapper.append(messageLabel, inputComment);
     commentContainer.append(
         errorMessage,
+        addComment,
         commentNameWrapper,
         commentMessageWrapper,
         submitComment
@@ -462,18 +509,14 @@ function createModalPage(tvShow) {
     descSection.appendChild(showDescription);
     leftSection.append(showTitle, movieSection, descSection);
 
-    middleSection.appendChild(middleTitle, middleBody);
+    middleSection.append(middleTitle, middleBody);
     commentsHeading.append(commentSectionTitle, commentsNum);
     displayComments.append(commentsHeading, displayCommentsBody);
 
     rightSection.append(commentContainer, displayComments);
 
-    modalContent.append(
-        leftSection,
-        middleSection,
-        rightSection,
-        closePageIcon
-    );
+    modalInner.append(leftSection, middleSection, rightSection);
+    modalContent.append(modalInner, closePageIcon);
 
     modalPage.append(modalContent);
 

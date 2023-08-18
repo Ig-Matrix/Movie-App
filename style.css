@@ -1,3 +1,10 @@
+header {
+    background-color: #683e14;
+}
+
+.wrapper {
+    background-color: #fefae0;
+}
 .close {
     position: absolute;
     top: 10px;
@@ -5,21 +12,35 @@
     font-size: 25px;
     cursor: pointer;
 }
+h1,
+h3 {
+    color: #410606;
+}
 
 .card-img-top {
     object-fit: cover;
     height: 100%;
     cursor: pointer;
+    transition: all 0.5s ease-in;
 }
 
+.card-img-top:hover {
+    scale: 1.03;
+}
 .fa-heart,
 .fa-message {
     cursor: pointer;
+    color: #160404;
     margin-left: 1rem;
+}
+
+.card {
+    padding-top: 0.2rem;
 }
 
 .modalImage {
     width: 10rem;
+    display: none;
 }
 .modal {
     display: none;
@@ -36,17 +57,36 @@
 
 .modal-content {
     position: absolute;
-    top: 50%;
+    top: 100%;
     left: 50%;
-    max-width: 80%;
+    max-width: 90%;
     transform: translate(-50%, -50%);
     background-color: wheat;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
+}
+
+.modalInner {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
+    grid-template-areas:
+        "x"
+        "y"
+        "z";
+}
+
+.leftSection {
+    grid-area: x;
+}
+
+.middleSection {
+    grid-area: y;
+    background-color: aliceblue;
+    padding: 0.5rem 0.2rem 1rem 0.5rem;
+}
+.rightSection {
+    grid-area: z;
 }
 
 .close {
@@ -60,13 +100,23 @@
     color: red;
     visibility: hidden;
 }
+.movieSection {
+    margin-bottom: 0.5rem;
+}
 
 .modal-text-desc {
     text-align: justify;
 }
-.middleSection {
-    background-color: aliceblue;
+
+.middleTitle {
     text-align: center;
+}
+
+.middleTitle {
+    color: goldenrod;
+}
+.showTitle {
+    color: #410606;
 }
 
 .nameWrapper,
@@ -74,11 +124,20 @@
     padding: 1rem;
 }
 
+.nameWrapper {
+    padding-top: 0;
+}
+
 .submit-btn {
     margin-left: 1rem;
     border: none;
     border-radius: 3px;
     padding: 0.5rem;
+}
+
+.submit-btn:hover {
+    background-color: #410606;
+    color: #f3f3f3;
 }
 
 .display-comments {
@@ -93,7 +152,6 @@
 .comment {
     margin: 10px 0;
     padding: 5px;
-    border: 1px ridge #ddd;
     border-radius: 5px;
     background-color: #f5f5f5;
 }
@@ -119,8 +177,14 @@ span.commentMessage {
 
 span.time {
     font-style: italic;
+    font-size: 12px;
     color: #888;
     margin-left: 0.5rem;
+}
+
+.addcomment {
+    text-align: center;
+    color: #410606;
 }
 
 .commentsHeading {
@@ -150,4 +214,64 @@ span.time {
 
 .card-title {
     grid-area: a;
+}
+
+footer {
+    background-color: #683e14;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+.pagination {
+    padding: 1rem;
+    width: fit-content;
+    margin: auto !important;
+}
+
+@media screen and (width > 670px) {
+    .modalImage {
+        display: block;
+    }
+}
+
+@media screen and (width > 768px) {
+    .modal-content {
+        top: 60%;
+    }
+    .modalInner {
+        /* margin-top: 3rem; */
+        grid-template-areas:
+            "x y"
+            "z z";
+    }
+
+    .rightSection {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+}
+
+@media screen and (width > 992px) {
+    .modal-content {
+        top: 50%;
+        max-width: 80%;
+    }
+
+    .modalInner {
+        grid-template-areas: "x y z";
+    }
+
+    .rightSection {
+        display: block;
+    }
 }
