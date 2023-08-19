@@ -54,8 +54,8 @@ next.classList.add("page-link");
 prev.classList.add("page-link");
 prevLi.classList.add("page-item");
 
-nextLi.appendChild(next)
-prevLi.appendChild(prev)
+nextLi.appendChild(next);
+prevLi.appendChild(prev);
 paginationContainer.append(prevLi, nextLi);
 moviePage.append(paginationContainer);
 
@@ -133,6 +133,8 @@ function displayShow(tvShow, ratingAve) {
 
     let ratingsEl = elementClasslist("div", "ratingsEl");
     let likesCommentsCont = elementClasslist("div", "likes-comm-cont");
+    let commentsandNumCont = elementClasslist("div", "commentsandNumCont");
+    let likeandMessWrapper = elementClasslist("div", "likeandMessWrapper");
     cardImg.src = tvShow.image.original;
     cardTitle.textContent = tvShow.name;
 
@@ -154,7 +156,7 @@ function displayShow(tvShow, ratingAve) {
     errorMes.textContent = "name and comment cannot be empty";
 
     async function sendComments(id, username, comment) {
-        const apiUrl = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/comments`;
+        const apiUrl = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/Z7whx2c0JD54GeGnp2TU/comments`;
         const commentsData = {
             item_id: id,
             username: username,
@@ -222,12 +224,12 @@ function displayShow(tvShow, ratingAve) {
                 numComments.innerText = apiData.length;
             }
             if (numComments.innerText > 0) {
-                commentsIcon.style.color = "#160404";
+                commentsIcon.style.color = "#704949";
             }
         }
     }
     async function getcomments(id) {
-        const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/comments?item_id=${id}`;
+        const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/Z7whx2c0JD54GeGnp2TU/comments?item_id=${id}`;
         try {
             const res = await fetch(url);
             const data = await res.json();
@@ -240,7 +242,7 @@ function displayShow(tvShow, ratingAve) {
     getcomments(tvShow.id);
 
     async function sendLikes(id) {
-        const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/likes`;
+        const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/Z7whx2c0JD54GeGnp2TU/likes`;
         const dataBody = {
             item_id: id,
         };
@@ -264,7 +266,7 @@ function displayShow(tvShow, ratingAve) {
     getLikes();
 
     async function getLikes() {
-        const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/ENb4nAMyQ3alRHSK9fPd/likes`;
+        const url = `https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps/Z7whx2c0JD54GeGnp2TU/likes`;
         try {
             const res = await fetch(url);
             const data = await res.json();
@@ -399,8 +401,12 @@ function displayShow(tvShow, ratingAve) {
 
     displayRatings();
 
-    likesCommentsCont.append(likes, likesNum, commentsIcon, numComments);
-    cardBody.append(cardTitle, ratingsEl, likesCommentsCont);
+    commentsandNumCont.append(commentsIcon, numComments);
+
+    likesCommentsCont.append(likes, likesNum);
+    likeandMessWrapper.append(likesCommentsCont, commentsandNumCont)
+
+    cardBody.append(cardTitle, ratingsEl, likeandMessWrapper);
     card.append(cardImg, cardBody, modal);
 
     return card;

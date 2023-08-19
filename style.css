@@ -20,6 +20,7 @@ h3 {
 .card-img-top {
     object-fit: cover;
     height: 100%;
+    border-radius: 3px;
     cursor: pointer;
     transition: all 0.5s ease-in;
 }
@@ -30,12 +31,13 @@ h3 {
 .fa-heart,
 .fa-message {
     cursor: pointer;
-    color: #160404;
+    color: #704949;
     margin-left: 1rem;
 }
 
 .card {
     padding-top: 0.2rem;
+    margin-bottom: .7rem;
 }
 
 .modalImage {
@@ -204,8 +206,11 @@ span.time {
         "b c";
 }
 
-.likes-comm-cont {
+
+
+.likeandMessWrapper {
     grid-area: c;
+    display: flex;
 }
 
 .ratingsEl {
@@ -214,6 +219,13 @@ span.time {
 
 .card-title {
     grid-area: a;
+}
+
+.commentsandNumCont, .likes-comm-cont{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .2rem;
 }
 
 footer {
