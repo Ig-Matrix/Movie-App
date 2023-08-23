@@ -5,13 +5,15 @@ header {
 .wrapper {
     background-color: #fefae0;
 }
+
 .close {
     position: absolute;
     top: 10px;
-    right: 10px;
-    font-size: 25px;
+    right: 8px;
+    font-size: 1.5rem;
     cursor: pointer;
 }
+
 h1,
 h3 {
     color: #410606;
@@ -28,6 +30,7 @@ h3 {
 .card-img-top:hover {
     scale: 1.03;
 }
+
 .fa-heart,
 .fa-message {
     cursor: pointer;
@@ -37,13 +40,14 @@ h3 {
 
 .card {
     padding-top: 0.2rem;
-    margin-bottom: .7rem;
+    margin-bottom: 0.7rem;
 }
 
 .modalImage {
     width: 10rem;
     display: none;
 }
+
 .modal {
     display: none;
     position: fixed;
@@ -51,22 +55,24 @@ h3 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgb(0 0 0 / 80%);
     justify-content: center;
     align-items: center;
     z-index: 1;
 }
 
 .modal-content {
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: 3%;
     left: 50%;
     max-width: 90%;
-    transform: translate(-50%, -50%);
+    max-height: 100%;
     background-color: wheat;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 10px rgb(0 0 0 / 60%);
+    transform: translateX(-50%);
+    overflow-y: auto;
 }
 
 .modalInner {
@@ -76,6 +82,15 @@ h3 {
         "x"
         "y"
         "z";
+    max-height: 100vh;
+    overflow-y: auto;
+}
+
+.leftSection,
+.middleSection,
+.rightSection {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
 }
 
 .leftSection {
@@ -87,21 +102,16 @@ h3 {
     background-color: aliceblue;
     padding: 0.5rem 0.2rem 1rem 0.5rem;
 }
+
 .rightSection {
     grid-area: z;
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
 }
 
 .error {
     color: red;
     visibility: hidden;
 }
+
 .movieSection {
     margin-bottom: 0.5rem;
 }
@@ -117,6 +127,7 @@ h3 {
 .middleTitle {
     color: goldenrod;
 }
+
 .showTitle {
     color: #410606;
 }
@@ -206,8 +217,6 @@ span.time {
         "b c";
 }
 
-
-
 .likeandMessWrapper {
     grid-area: c;
     display: flex;
@@ -221,11 +230,12 @@ span.time {
     grid-area: a;
 }
 
-.commentsandNumCont, .likes-comm-cont{
+.commentsandNumCont,
+.likes-comm-cont {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: .2rem;
+    gap: 0.2rem;
 }
 
 footer {
@@ -253,9 +263,6 @@ h2 {
 }
 
 @media screen and (width > 768px) {
-    .modal-content {
-        top: 60%;
-    }
     .modalInner {
         /* margin-top: 3rem; */
         grid-template-areas:
@@ -274,11 +281,6 @@ h2 {
 }
 
 @media screen and (width > 992px) {
-    .modal-content {
-        top: 50%;
-        max-width: 80%;
-    }
-
     .modalInner {
         grid-template-areas: "x y z";
     }
