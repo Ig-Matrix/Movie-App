@@ -257,11 +257,11 @@ h2 {
 
 /* Style for Webkit-based browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: wheat;
+    background-color: #e2d7c3;
     border-radius: 5px;
 }
 
@@ -270,7 +270,7 @@ h2 {
 }
 
 body {
-    scrollbar-color: wheat transparent; /* Set the color of the scrollbar thumb and track */
+    scrollbar-color: #e2d7c3 transparent;
 }
 
 @media screen and (width > 670px) {
