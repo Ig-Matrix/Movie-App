@@ -95,12 +95,13 @@ h3 {
 
 .leftSection {
     grid-area: x;
+    padding: 0 1rem;
 }
 
 .middleSection {
     grid-area: y;
     background-color: aliceblue;
-    padding: 0.5rem 0.2rem 1rem 0.5rem;
+    padding: 0.5rem 0.5rem 1rem 0.5rem;
 }
 
 .rightSection {
@@ -118,13 +119,11 @@ h3 {
 
 .modal-text-desc {
     text-align: justify;
+    max-width: 100%;
 }
 
 .middleTitle {
     text-align: center;
-}
-
-.middleTitle {
     color: goldenrod;
 }
 
