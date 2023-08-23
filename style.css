@@ -255,6 +255,24 @@ h2 {
     margin: auto !important;
 }
 
+/* Style for Webkit-based browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: wheat;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+body {
+    scrollbar-color: wheat transparent; /* Set the color of the scrollbar thumb and track */
+}
+
 @media screen and (width > 670px) {
     .modalImage {
         display: block;
