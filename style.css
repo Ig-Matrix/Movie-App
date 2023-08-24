@@ -1,12 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap");
-
 header {
     background-color: #683e14;
 }
 
 .wrapper {
     background-color: #fefae0;
-    font-family: Quicksand, sans-serif;
 }
 
 .close {
