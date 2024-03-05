@@ -1,26 +1,53 @@
+header {
+    background-color: #683e14;
+}
+
+.wrapper {
+    background-color: #fefae0;
+}
+
 .close {
     position: absolute;
     top: 10px;
-    right: 10px;
-    font-size: 25px;
+    right: 8px;
+    font-size: 1.5rem;
     cursor: pointer;
+}
+
+h1,
+h3 {
+    color: #410606;
 }
 
 .card-img-top {
     object-fit: cover;
     height: 100%;
+    border-radius: 3px;
     cursor: pointer;
+    transition: all 0.5s ease-in;
+}
+
+.card-img-top:hover {
+    scale: 1.03;
 }
 
 .fa-heart,
 .fa-message {
     cursor: pointer;
+    color: #704949;
     margin-left: 1rem;
+}
+
+.card {
+    padding-top: 0.2rem;
+    margin-bottom: 0.7rem;
 }
 
 .modalImage {
     width: 10rem;
+    display: none;
 }
+
 .modal {
     display: none;
     position: fixed;
@@ -28,32 +55,57 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgb(0 0 0 / 80%);
     justify-content: center;
     align-items: center;
     z-index: 1;
 }
 
 .modal-content {
-    position: absolute;
-    top: 50%;
+    position: fixed;
+    top: 3%;
     left: 50%;
-    max-width: 80%;
-    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 100%;
     background-color: wheat;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+    box-shadow: 0 0 10px rgb(0 0 0 / 60%);
+    transform: translateX(-50%);
+    overflow-y: auto;
 }
 
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
+.modalInner {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-areas:
+        "x"
+        "y"
+        "z";
+    max-height: 100vh;
+    overflow-y: auto;
+}
+/* 
+.leftSection,
+.middleSection,
+.rightSection {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+} */
+
+.leftSection {
+    grid-area: x;
+    padding: 0 1rem;
+}
+
+.middleSection {
+    grid-area: y;
+    background-color: aliceblue;
+    padding: 0.5rem 0.5rem 1rem 0.5rem;
+}
+
+.rightSection {
+    grid-area: z;
 }
 
 .error {
@@ -61,12 +113,22 @@
     visibility: hidden;
 }
 
+.movieSection {
+    margin-bottom: 0.5rem;
+}
+
 .modal-text-desc {
     text-align: justify;
+    max-width: 100%;
 }
-.middleSection {
-    background-color: aliceblue;
+
+.middleTitle {
     text-align: center;
+    color: goldenrod;
+}
+
+.showTitle {
+    color: #410606;
 }
 
 .nameWrapper,
@@ -74,11 +136,20 @@
     padding: 1rem;
 }
 
+.nameWrapper {
+    padding-top: 0;
+}
+
 .submit-btn {
     margin-left: 1rem;
     border: none;
     border-radius: 3px;
     padding: 0.5rem;
+}
+
+.submit-btn:hover {
+    background-color: #410606;
+    color: #f3f3f3;
 }
 
 .display-comments {
@@ -93,7 +164,6 @@
 .comment {
     margin: 10px 0;
     padding: 5px;
-    border: 1px ridge #ddd;
     border-radius: 5px;
     background-color: #f5f5f5;
 }
@@ -119,8 +189,14 @@ span.commentMessage {
 
 span.time {
     font-style: italic;
+    font-size: 12px;
     color: #888;
     margin-left: 0.5rem;
+}
+
+.addcomment {
+    text-align: center;
+    color: #410606;
 }
 
 .commentsHeading {
@@ -140,8 +216,9 @@ span.time {
         "b c";
 }
 
-.likes-comm-cont {
+.likeandMessWrapper {
     grid-area: c;
+    display: flex;
 }
 
 .ratingsEl {
@@ -150,4 +227,82 @@ span.time {
 
 .card-title {
     grid-area: a;
+}
+
+.commentsandNumCont,
+.likes-comm-cont {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+}
+
+footer {
+    background-color: #683e14;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+.pagination {
+    padding: 1rem;
+    width: fit-content;
+    margin: auto !important;
+}
+
+/* Style for Webkit-based browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #e2d7c3;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+body {
+    scrollbar-color: #e2d7c3 transparent;
+}
+
+@media screen and (width > 670px) {
+    .modalImage {
+        display: block;
+    }
+}
+
+@media screen and (width > 768px) {
+    .modalInner {
+        /* margin-top: 3rem; */
+        grid-template-areas:
+            "x y"
+            "z z";
+    }
+
+    .rightSection {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+}
+
+@media screen and (width > 992px) {
+    .modalInner {
+        grid-template-areas: "x y z";
+    }
+
+    .rightSection {
+        display: block;
+    }
 }
